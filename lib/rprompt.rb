@@ -1,53 +1,31 @@
 require "rprompt/version"
 
+require "term/ansicolor"
+# Usage as Mixin into String or its Subclasses
+class String
+  include Term::ANSIColor
+end
+
 module Rprompt
-	class TerminalColors
-		# initializes terminal colors
-		# @param colorConfig [Hash] hash containing color names and color codes
-		def initialize(colorConfig)
-			@config = colorConfig
-		end
-
-		# gets color code
-		# @param name [Symbol] color name
-		# @return [String] color code
-		def color(name)
-			@config[name]
-		end
-	end
-
 	class PromptItem
+
 		# @return [String] symbol character to identify prompt item
-		attr_reader :symbol
+		attr_reader :symbol, :color
 
 		# @param config [Hash] Prompt item configuration:
 		# 	- :cmd => shell command
 		# 	- :symbol => character
 		# 	- :color => color name
-		# @param [TerminalColors]
-		def initialize(config, termColors = nil)
+		def initialize(config)
 			@cmd        = config[:cmd]
 			@symbol     = config[:symbol]
 			@color      = config[:color]
-			@termColors = termColors
 		end
 
 		# executes prompt item command
 		# @return [String] command result
 		def commandResult
 			%x(#{@cmd} 2> /dev/null)
-		end
-
-		# @return [String] terminal compliant color code
-		def termColor
-			if @color
-				@termColors.nil? ? '' : @termColors.color(@color.to_sym)
-			end
-		end
-
-		# @return [String] terminal reset color code
-		def resetColor
-			'\[\033[0m\]'
 		end
 	end
 
@@ -59,8 +37,8 @@ module Rprompt
 
 		# @return [String] terminal representation of the number of files
 		def show
-			if termColor
-				numberOfFiles != 0 ? "#{termColor}#{symbol}#{numberOfFiles}#{resetColor}" : ""
+			if color
+				numberOfFiles != 0 ? "#{symbol}#{numberOfFiles}".send(color) : ""
 			else
 				numberOfFiles != 0 ? "#{symbol}#{numberOfFiles}" : ""
 			end
@@ -75,8 +53,8 @@ module Rprompt
 
 		# @return [String] terminal representation of the branch name
 		def show
-			if termColor
-				"#{termColor}#{symbol}#{shortBranchName}#{resetColor}"
+			if color
+				"#{symbol}#{shortBranchName}".send(color)
 			else
 				"#{symbol}#{shortBranchName}"
 			end
@@ -86,13 +64,13 @@ module Rprompt
 	class GitSha < PromptItem
 		# @return [String] last five numbers form the sha1
 		def sha
-			commandResult.chomp[-9,9]
+			commandResult.chomp[-6,6]
 		end
 
 		# @return [String] terminal representation of the number returned by 'sha'
 		def show
-			if termColor
-				"#{termColor}#{symbol}#{sha}#{resetColor}"
+			if color
+				"#{symbol}#{sha}".send(color)
 			else
 				"#{symbol}#{sha}"
 			end
@@ -102,9 +80,9 @@ module Rprompt
 	class GitTrack < PromptItem
 		# @param (see PromptItem#initialize)
 		# @param [Symbol] state ("ahead" or "behind")
-		def initialize(config, termColors, state)
+		def initialize(config, state)
 			@state = state
-			super(config, termColors)
+			super(config)
 		end
 
 		# @return [Integer] number of commits ahead or behind remote
@@ -116,7 +94,11 @@ module Rprompt
 
 		# @return [String] terminal representation of the tracking
 		def show
-			count != 0 ? "#{termColor}#{symbol}#{count}#{resetColor}" : ""
+			if color
+				count != 0 ? "#{symbol}#{count}".send(color) : ""
+			else
+				count != 0 ? "#{symbol}#{count}" : ""
+			end
 		end
 	end
 
@@ -133,8 +115,8 @@ module Rprompt
 
 		# @return [String] terminal representation of the ruby version
 		def show
-			if termColor
-				"#{termColor}#{symbol}#{ruby}#{resetColor}"
+			if color
+				"#{symbol}#{ruby}".send(color)
 			else
 				"#{symbol}#{ruby}"
 			end
@@ -154,14 +136,11 @@ module Rprompt
 
 		# @return [String] terminal representation of the gemset used
 		def show
-			if !gemset.empty?
-				if termColor
-					"#{termColor}#{symbol}#{gemset}#{resetColor}"
-				else
-					"#{symbol}#{gemset}"
-				end
+			if color
+				"#{symbol}#{gemset}".send(color)
+			else
+				"#{symbol}#{gemset}"
 			end
-			""
 		end
 	end
 

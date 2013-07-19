@@ -3,7 +3,6 @@
 
 require 'YAML'
 require 'rprompt'
-require 'pp'
 
 configFile = "#{File.expand_path('~')}/.rPrompt/config.yml"
 begin
@@ -17,25 +16,22 @@ end
 stdPrompt = config[:stdprompt]
 gitConfig = config[:git]
 gitLayout = gitConfig[:layout]
-colorConfig = config[:colors]
 rvmConfig = config[:rvm]
 rvmLayout = rvmConfig[:layout]
 
-allColors = Rprompt::TerminalColors.new(colorConfig)
-
 if File.exist?(".git")
-	staged    = Rprompt::GitNumbers.new(gitConfig[:staged], allColors)
-	modified  = Rprompt::GitNumbers.new(gitConfig[:modified], allColors)
-	untracked = Rprompt::GitNumbers.new(gitConfig[:untracked], allColors)
-	unmerged  = Rprompt::GitNumbers.new(gitConfig[:unmerged], allColors)
-	branch    = Rprompt::GitBranch.new(gitConfig[:branch], allColors)
-	ahead     = Rprompt::GitTrack.new(gitConfig[:ahead], allColors, "ahead")
-	behind    = Rprompt::GitTrack.new(gitConfig[:behind], allColors, "behind")
-	sha       = Rprompt::GitSha.new(gitConfig[:sha], allColors)
+	staged    = Rprompt::GitNumbers.new(gitConfig[:staged])
+	modified  = Rprompt::GitNumbers.new(gitConfig[:modified])
+	untracked = Rprompt::GitNumbers.new(gitConfig[:untracked])
+	unmerged  = Rprompt::GitNumbers.new(gitConfig[:unmerged])
+	branch    = Rprompt::GitBranch.new(gitConfig[:branch])
+	ahead     = Rprompt::GitTrack.new(gitConfig[:ahead], "ahead")
+	behind    = Rprompt::GitTrack.new(gitConfig[:behind], "behind")
+	sha       = Rprompt::GitSha.new(gitConfig[:sha])
 
 	if staged.numberOfFiles == 0 && untracked.numberOfFiles == 0 && unmerged.numberOfFiles == 0 && modified.numberOfFiles == 0
 		gitLayout.gsub!(/staged|modified|untracked|unmerged/, '')
-		gitLayout["allgood"]   = "#{allColors.color(:Green)}✔#{allColors.color(:Reset)}"
+		gitLayout["allgood"]   = "✔".send(:green)
 	else
 		gitLayout["allgood"]   = ''
 		gitLayout["staged"]    = "#{staged.show}"
@@ -54,12 +50,11 @@ end
 
 # RVM
 
-ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby], allColors)
-gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset], allColors)
+ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby])
+gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset])
 
 rvmLayout["ruby"] = ruby.show if rvmLayout.include?("ruby")
 rvmLayout.gsub!(/gemset/, gemset.show) if rvmLayout.include?("gemset")
-rvmLayout.gsub!(/\s/, "")
 
 # # TODO:
 # # - indicate if rails server is running (port 3000)
