@@ -34,10 +34,7 @@ if File.exist?(".git")
 	sha       = Rprompt::GitSha.new(gitConfig[:sha], allColors)
 
 	if staged.numberOfFiles == 0 && untracked.numberOfFiles == 0 && unmerged.numberOfFiles == 0 && modified.numberOfFiles == 0
-		gitLayout["staged"]    = ''
-		gitLayout["modified"]  =''
-		gitLayout["untracked"] = ''
-		gitLayout["unmerged"]  = ''
+		gitLayout.gsub!(/staged|modified|untracked|unmerged/, '')
 		gitLayout["allgood"]   = "#{allColors.color(:Green)}✔#{allColors.color(:Reset)}"
 	else
 		gitLayout["allgood"]   = ''
