@@ -3,6 +3,7 @@
 
 require 'YAML'
 require 'rprompt'
+require 'pp'
 
 configFile = "#{File.expand_path('~')}/.rPrompt/config.yml"
 begin
@@ -59,8 +60,9 @@ end
 ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby], allColors)
 gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset], allColors)
 
-rvmLayout["ruby"] = ruby.show
-rvmLayout["gemset"] = gemset.show
+rvmLayout["ruby"] = ruby.show if rvmLayout.include?("ruby")
+rvmLayout.gsub!(/gemset/, gemset.show) if rvmLayout.include?("gemset")
+rvmLayout.gsub!(/\s/, "")
 
 # # TODO:
 # # - indicate if rails server is running (port 3000)

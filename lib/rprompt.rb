@@ -86,7 +86,7 @@ module Rprompt
 	class GitSha < PromptItem
 		# @return [String] last five numbers form the sha1
 		def sha
-			commandResult.chomp[-5,5]
+			commandResult.chomp[-9,9]
 		end
 
 		# @return [String] terminal representation of the number returned by 'sha'
@@ -154,11 +154,14 @@ module Rprompt
 
 		# @return [String] terminal representation of the gemset used
 		def show
-			if termColor
-				"#{termColor}#{symbol}#{gemset}#{resetColor}"
-			else
-				"#{symbol}#{gemset}"
+			if !gemset.empty?
+				if termColor
+					"#{termColor}#{symbol}#{gemset}#{resetColor}"
+				else
+					"#{symbol}#{gemset}"
+				end
 			end
+			""
 		end
 	end
 
