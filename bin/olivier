@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+
+require 'YAML'
+require 'rprompt'
+require 'pp'
+
+configFile = "#{File.expand_path('~')}/.rPrompt/config.yml"
+begin
+	config = YAML.load_file configFile
+rescue => err
+	puts err.message
+	puts "Please run 'rPrompt config' to create the initial configuration.\n> " #TODO
+	exit
+end
+
+stdPrompt = config[:stdprompt]
+gitConfig = config[:git]
+gitLayout = gitConfig[:layout]
+colorConfig = config[:colors]
+rvmConfig = config[:rvm]
+rvmLayout = rvmConfig[:layout]
+
+allColors = Rprompt::TerminalColors.new(colorConfig)
+
+pp allColors
+
+exit
+
+if File.exist?(".git")
+	staged    = GitNumbers.new(gitConfig[:staged], allColors)
+	modified  = GitNumbers.new(gitConfig[:modified], allColors)
+	untracked = GitNumbers.new(gitConfig[:untracked], allColors)
+	unmerged  = GitNumbers.new(gitConfig[:unmerged], allColors)
+	branch    = GitBranch.new(gitConfig[:branch], allColors)
+	ahead     = GitTrack.new(gitConfig[:ahead], allColors, "ahead")
+	behind    = GitTrack.new(gitConfig[:behind], allColors, "behind")
+	sha       = GitSha.new(gitConfig[:sha], allColors)
+
+	if staged.numberOfFiles == 0 && untracked.numberOfFiles == 0 && unmerged.numberOfFiles == 0 && modified.numberOfFiles == 0
+		gitLayout["staged"]    = ''
+		gitLayout["modified"]  =''
+		gitLayout["untracked"] = ''
+		gitLayout["unmerged"]  = ''
+		gitLayout["allgood"]   = "#{allColors.color(:Green)}✔#{allColors.color(:Reset)}"
+	else
+		gitLayout["allgood"]   = ''
+		gitLayout["staged"]    = "#{staged.show}"
+		gitLayout["modified"]  = "#{modified.show}"
+		gitLayout["untracked"] = "#{untracked.show}"
+		gitLayout["unmerged"]  = "#{unmerged.show}"
+	end
+
+	gitLayout["branch"] = "#{branch.show}"
+	gitLayout["sha"]    = "#{sha.show}"
+	gitLayout["ahead"]  = "#{ahead.show}"
+	gitLayout["behind"] = "#{behind.show}"
+else
+	gitLayout = ''
+end
+
+
+# RVM
+
+ruby = RvmRuby.new(rvmConfig[:ruby], allColors)
+gemset = RvmGemset.new(rvmConfig[:gemset], allColors)
+
+rvmLayout["ruby"] = ruby.show
+rvmLayout["gemset"] = gemset.show
+
+# # TODO:
+# # - indicate if rails server is running (port 3000)
+# # - layout needs a distinct start and finish enclosure to allow for spacing at both ends
+
+prompt = "#{stdPrompt[:start]}#{gitLayout} #{rvmLayout}#{stdPrompt[:end]}"
+
+print prompt
