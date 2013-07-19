@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
+#encoding: utf-8
 
 require 'YAML'
 require 'rprompt'
-require 'pp'
 
 configFile = "#{File.expand_path('~')}/.rPrompt/config.yml"
 begin
@@ -22,19 +22,15 @@ rvmLayout = rvmConfig[:layout]
 
 allColors = Rprompt::TerminalColors.new(colorConfig)
 
-pp allColors
-
-exit
-
 if File.exist?(".git")
-	staged    = GitNumbers.new(gitConfig[:staged], allColors)
-	modified  = GitNumbers.new(gitConfig[:modified], allColors)
-	untracked = GitNumbers.new(gitConfig[:untracked], allColors)
-	unmerged  = GitNumbers.new(gitConfig[:unmerged], allColors)
-	branch    = GitBranch.new(gitConfig[:branch], allColors)
-	ahead     = GitTrack.new(gitConfig[:ahead], allColors, "ahead")
-	behind    = GitTrack.new(gitConfig[:behind], allColors, "behind")
-	sha       = GitSha.new(gitConfig[:sha], allColors)
+	staged    = Rprompt::GitNumbers.new(gitConfig[:staged], allColors)
+	modified  = Rprompt::GitNumbers.new(gitConfig[:modified], allColors)
+	untracked = Rprompt::GitNumbers.new(gitConfig[:untracked], allColors)
+	unmerged  = Rprompt::GitNumbers.new(gitConfig[:unmerged], allColors)
+	branch    = Rprompt::GitBranch.new(gitConfig[:branch], allColors)
+	ahead     = Rprompt::GitTrack.new(gitConfig[:ahead], allColors, "ahead")
+	behind    = Rprompt::GitTrack.new(gitConfig[:behind], allColors, "behind")
+	sha       = Rprompt::GitSha.new(gitConfig[:sha], allColors)
 
 	if staged.numberOfFiles == 0 && untracked.numberOfFiles == 0 && unmerged.numberOfFiles == 0 && modified.numberOfFiles == 0
 		gitLayout["staged"]    = ''
@@ -58,11 +54,10 @@ else
 	gitLayout = ''
 end
 
-
 # RVM
 
-ruby = RvmRuby.new(rvmConfig[:ruby], allColors)
-gemset = RvmGemset.new(rvmConfig[:gemset], allColors)
+ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby], allColors)
+gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset], allColors)
 
 rvmLayout["ruby"] = ruby.show
 rvmLayout["gemset"] = gemset.show
