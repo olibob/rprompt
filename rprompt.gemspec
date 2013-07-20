@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["robby57@gmail.com"]
   spec.description   = %q{Adds usefull information to your bash prompt, }
   spec.summary       = %q{rprompt}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/olibob/rprompt.git"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
