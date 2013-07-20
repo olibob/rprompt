@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+todo = %Q(rprompt standard configuration has been created.
+
+To make the magic happen:
+1/ edit your ~/.bashrc or ~/.bash_profile
+(depending on your preferences and setup)
+2/ if you're setting PS1 already, comment it while you're using rprompt
+3/ paste the following lines between '---' at the end of the file
+
+---
+# Setting terminal promt with rprompt gem
+PROMPT_COMMAND="$PROMPT_COMMAND PS1=\\"\\$(rprompt)\\";"
+---
+
+4/ quit your terminal and re-open it for the change to take effect.
+
+Edit $HOME/.rprompt/config.yml to change the configuration.
+(you can always re-install the default configuration by issuing 'rpromptconf')
+
+Enjoy :\))
+
+src = File.expand_path(File.join(File.dirname(__FILE__), '..', 'files/config.yml'))
+home = File.expand_path('~')
+dest = File.join(home, '.rprompt')
+begin
+	FileUtils.mkdir(dest) if !File.exists?(dest)
+	FileUtils.cp src, dest
+	puts todo
+rescue => err
+	puts "Oops, something went wrong: " + err.message
+end

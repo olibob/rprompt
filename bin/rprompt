@@ -4,7 +4,7 @@
 require 'YAML'
 require 'rprompt'
 
-configFile = "#{File.expand_path('~')}/.rPrompt/config.yml"
+configFile = "#{File.expand_path('~')}/.rprompt/config.yml"
 begin
 	config = YAML.load_file configFile
 rescue => err
@@ -13,13 +13,13 @@ rescue => err
 	exit
 end
 
-stdPrompt = config[:stdprompt]
-gitConfig = config[:git]
-gitLayout = gitConfig[:layout]
-rvmConfig = config[:rvm]
-rvmLayout = rvmConfig[:layout]
+stdPrompt = config[:stdprompt] if config.has_key?(:stdprompt)
+gitConfig = config[:git] if config.has_key?(:git)
+gitLayout = gitConfig[:layout] if gitConfig
+rvmConfig = config[:rvm] if config.has_key?(:rvm)
+rvmLayout = rvmConfig[:layout] if rvmConfig
 
-if File.exist?(".git")
+if File.exist?(".git") && gitConfig
 	staged    = Rprompt::GitNumbers.new(gitConfig[:staged])
 	modified  = Rprompt::GitNumbers.new(gitConfig[:modified])
 	untracked = Rprompt::GitNumbers.new(gitConfig[:untracked])
@@ -31,35 +31,32 @@ if File.exist?(".git")
 
 	if staged.numberOfFiles == 0 && untracked.numberOfFiles == 0 && unmerged.numberOfFiles == 0 && modified.numberOfFiles == 0
 		gitLayout.gsub!(/staged|modified|untracked|unmerged/, '')
-		gitLayout["allgood"]   = "✔".send(:green)
+		gitLayout.gsub!(/allgood/, "✔".send(:green)) if gitLayout.include?("allgood")
 	else
-		gitLayout["allgood"]   = ''
-		gitLayout["staged"]    = "#{staged.show}"
-		gitLayout["modified"]  = "#{modified.show}"
-		gitLayout["untracked"] = "#{untracked.show}"
-		gitLayout["unmerged"]  = "#{unmerged.show}"
+		gitLayout.gsub!(/allgood/, '') if gitLayout.include?("allgood")
+		gitLayout.gsub!(/staged/, staged.show) if gitLayout.include?("staged")
+		gitLayout.gsub!(/modified/, modified.show) if gitLayout.include?("modified")
+		gitLayout.gsub!(/untracked/, untracked.show) if gitLayout.include?("untracked")
+		gitLayout.gsub!(/unmerged/, unmerged.show) if gitLayout.include?("unmerged")
 	end
 
-	gitLayout["branch"] = "#{branch.show}"
-	gitLayout["sha"]    = "#{sha.show}"
-	gitLayout["ahead"]  = "#{ahead.show}"
-	gitLayout["behind"] = "#{behind.show}"
+	gitLayout.gsub!(/branch/, branch.show) if gitLayout.include?("branch")
+	gitLayout.gsub!(/sha/, sha.show) if gitLayout.include?("sha")
+	gitLayout.gsub!(/ahead/, ahead.show) if gitLayout.include?("ahead")
+	gitLayout.gsub!(/behind/, behind.show) if gitLayout.include?("behind")
 else
 	gitLayout = ''
 end
 
 # RVM
 
-ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby])
-gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset])
+if rvmConfig
+	ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby])
+	gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset])
 
-rvmLayout["ruby"] = ruby.show if rvmLayout.include?("ruby")
-rvmLayout.gsub!(/gemset/, gemset.show) if rvmLayout.include?("gemset")
-
-# # TODO:
-# # - indicate if rails server is running (port 3000)
-# # - layout needs a distinct start and finish enclosure to allow for spacing at both ends
+	rvmLayout.gsub!(/ruby/, ruby.show) if rvmLayout.include?("ruby")
+	rvmLayout.gsub!(/gemset/, gemset.show) if rvmLayout.include?("gemset")
+end
 
 prompt = "#{stdPrompt[:start]}#{gitLayout} #{rvmLayout}#{stdPrompt[:end]}"
-
 print prompt

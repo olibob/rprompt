@@ -58,5 +58,6 @@
   :gemset:
     :cmd: rvm-prompt
     :color: yellow
+    :symbol: ›
 
   :layout: ruby gemset

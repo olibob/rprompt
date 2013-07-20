@@ -136,10 +136,14 @@ module Rprompt
 
 		# @return [String] terminal representation of the gemset used
 		def show
-			if color
-				"#{symbol}#{gemset}".send(color)
+			if !gemset.empty?
+				if color
+					"#{symbol}#{gemset}".send(color)
+				else
+					"#{symbol}#{gemset}"
+				end
 			else
-				"#{symbol}#{gemset}"
+				''
 			end
 		end
 	end
