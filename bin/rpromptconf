@@ -12,7 +12,7 @@ To make the magic happen:
 
 ---
 # Setting terminal promt with rprompt gem
-PROMPT_COMMAND="$PROMPT_COMMAND PS1=\\"\\$(rprompt)\\";"
+PROMPT_COMMAND="PS1=\\"\\$(rprompt)\\";"
 ---
 
 4/ quit your terminal and re-open it for the change to take effect.

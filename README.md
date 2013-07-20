@@ -65,9 +65,10 @@ To make the magic happen:
 * if you're setting PS1 already, comment it while you're using rprompt
 * paste the following lines between '---' at the end of the file
 
+    Tested on MacOS 10.8.4
 		---
 		# Setting terminal promt with rprompt gem
-		PROMPT_COMMAND="$PROMPT_COMMAND PS1=\"\$(rprompt)\";"
+		PROMPT_COMMAND="PS1=\"\$(rprompt)\";"
 		---
 
 * quit your terminal and re-open it for the change to take effect.
