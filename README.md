@@ -1,4 +1,5 @@
 # rprompt
+[![Gem Version](https://badge.fury.io/rb/rprompt.png)](http://badge.fury.io/rb/rprompt)
 
 Pimp your prompt :-)
 
