@@ -79,4 +79,4 @@ Enjoy :\))
 
 ---
 
-<small>Tested on MacOS 10.8.4 and Fedora 19</small>
+<sub>Tested on MacOS 10.8.4 and Fedora 19</sub>
