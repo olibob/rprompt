@@ -52,11 +52,11 @@ The symbols are as follows:
 
 ## Installation
 
-`$ gem install rprompt`
+``$ gem install rprompt``
 
 Once the gem is installed,
 
-`$ rpromptcon`
+``$ rpromptconf``
 
 This will provide a standard config file: `$HOME/.rprompt/config.yml`
 
@@ -65,18 +65,18 @@ To make the magic happen:
 * edit your ~/.bashrc or ~/.bash_profile
 (depending on your preferences and setup)
 * if you're setting PS1 already, comment it while you're using rprompt
-* paste the following line at the end of the file [1]
+* paste the following line at the end of the file
 
-    `PROMPT_COMMAND="PS1=\"\$(rprompt)\";"`
+    ``PROMPT_COMMAND="PS1=\"\$(rprompt)\";"``
 
 
 * quit your terminal and re-open it for the change to take effect.
 
 Edit $HOME/.rprompt/config.yml to change the configuration.
-(you can always re-install the default configuration by issuing 'rpromptconf')
+(you can always re-install the default configuration by issuing ``rpromptconf`)
 
 Enjoy :\))
 
 ---
 
-[1]: Tested on MacOS 10.8.4 and Fedora 19
+<small>Tested on MacOS 10.8.4 and Fedora 19</small>

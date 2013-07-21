@@ -63,11 +63,15 @@
 
     <div id="content"><div id='filecontents'><h1>rprompt</h1>
 
+<p><a href="http://badge.fury.io/rb/rprompt"><img src="https://badge.fury.io/rb/rprompt.png" alt="Gem Version"></a></p>
+
 <p>Pimp your prompt :-)</p>
 
 <p>This prompt is a shameless port (and enhancement) of the &quot;Informative git prompt for bash and fish&quot; which you can find <a href="https://github.com/magicmonty/bash-git-prompt.git">here</a></p>
 
 <p>This gem is targeted toward users who use ruby, rvm and git. It will improve your <code>bash</code> prompt by displaying information about the current git repository or the rvm ruby version and gemset.</p>
+
+<p><img src="files/rprompt.png" alt="an inline image" title="rprompt in action"></p>
 
 <h2>Usage</h2>
 
@@ -126,13 +130,11 @@
 
 <h2>Installation</h2>
 
-<pre class="code ruby"><code class="ruby">$ gem install rprompt
-</code></pre>
+<p><code>$ gem install rprompt</code></p>
 
 <p>Once the gem is installed,</p>
 
-<pre class="code ruby"><code class="ruby">$ rpromptconf
-</code></pre>
+<p><code>$ rpromptconf</code></p>
 
 <p>This will provide a standard config file: <code>$HOME/.rprompt/config.yml</code></p>
 
@@ -142,24 +144,24 @@
 <li>edit your ~/.bashrc or ~/.bash_profile
 (depending on your preferences and setup)</li>
 <li>if you&#39;re setting PS1 already, comment it while you&#39;re using rprompt</li>
-<li><p>paste the following lines between &#39;---&#39; at the end of the file</p>
+<li><p>paste the following line at the end of the file</p>
 
-<pre class="code ruby"><code class="ruby">---
-# Setting terminal promt with rprompt gem
-PROMPT_COMMAND=&quot;$PROMPT_COMMAND PS1=\&quot;\$(rprompt)\&quot;;&quot;
----
-</code></pre></li>
+<p><code>PROMPT_COMMAND=&quot;PS1=\&quot;\$(rprompt)\&quot;;&quot;</code></p></li>
 <li><p>quit your terminal and re-open it for the change to take effect.</p></li>
 </ul>
 
 <p>Edit $HOME/.rprompt/config.yml to change the configuration.
-(you can always re-install the default configuration by issuing &#39;rpromptconf&#39;)</p>
+(you can always re-install the default configuration by issuing `<code>rpromptconf</code>)</p>
 
 <p>Enjoy :))</p>
+
+<hr>
+
+<p><small>Tested on MacOS 10.8.4 and Fedora 19</small></p>
 </div></div>
 
     <div id="footer">
-  Generated on Sat Jul 20 10:38:07 2013 by
+  Generated on Sun Jul 21 11:18:15 2013 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.6.2 (ruby-1.9.3).
 </div>
