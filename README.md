@@ -3,7 +3,7 @@
 
 Pimp your prompt :-)
 
-This prompt is a shameless port (and enhancement) of the "Informative git prompt for bash and fish" which you can find [here](https://github.com/magicmonty/bash-git-prompt.git)
+This prompt is a shameless port (and enhancement) of the "Informative git prompt for bash and fish" which you can find [here](https://github.com/magicmonty/bash-git-prompt.git).
 
 This gem is targeted toward users who use ruby, rvm and git. It will improve your ``bash`` prompt by displaying information about the current git repository or the rvm ruby version and gemset.
 
@@ -23,7 +23,26 @@ The prompt is customizable via a yaml file that enables you to:
 
 Using the layout is actually very easy: throw the name of the options around, add white spaces, delimiters, etc... Save, hit enter in your shell, done!
 
-### Git examples
+## Tips
+
+A few recommandations to make your life easier ;)
+
+* Install this gem in your **global** gemset. This way, rprompt will be available everywhere, whatever gemset you're using
+
+* When upgrading save your config file and create a new one with ``rpromptconf`` (specially for minor and major releases)
+
+* If you edit the config.yml file with vi and can not see the symbols characters correctly, try ``:set encoding=utf-8`` (you might want to put this in your ``.vimrc``)
+
+* If you don't want a fancy symbol or color, but still want the option use ``:none``
+
+        :modified:
+          :none:
+
+* The layout is just a string of option names (status , modified, staged ...) concatenated in the order you want them to appear, with or without white spaces, or what ever you characters you choose.
+
+* Report bugs ;)
+
+## Git examples
 
 The prompt may look like the following:
 
@@ -45,7 +64,7 @@ The symbols are as follows:
   - ``↑n``: ahead of remote by ``n`` commits
   - ``↓n``: behind remote by ``n`` commits
 
-### Rvm examples
+## Rvm examples
 
 * ∆1.9.3-p448: ruby version 1.9.3
 * ›global: using the global gemset
@@ -73,9 +92,9 @@ To make the magic happen:
 * quit your terminal and re-open it for the change to take effect.
 
 Edit $HOME/.rprompt/config.yml to change the configuration.
-(you can always re-install the default configuration by issuing ``rpromptconf`)
+(you can always re-install the default configuration by issuing ``rpromptconf``)
 
-Enjoy :\))
+Enjoy :\)
 
 ---
 
