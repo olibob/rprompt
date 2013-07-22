@@ -2,13 +2,15 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rprompt/version'
+require 'rprompt/deco'
+require 'rprompt/termcolor'
 
 Gem::Specification.new do |spec|
   spec.name          = "rprompt"
   spec.version       = Rprompt::VERSION
   spec.authors       = ["Olivier Robert"]
   spec.email         = ["robby57@gmail.com"]
-  spec.description   = %q{Adds usefull information to your bash prompt, }
+  spec.description   = %q{Adds usefull information to your bash prompt}
   spec.summary       = %q{rprompt}
   spec.homepage      = "https://github.com/olibob/rprompt.git"
   spec.license       = "MIT"

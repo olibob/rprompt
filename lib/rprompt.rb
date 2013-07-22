@@ -1,32 +1,6 @@
 require "rprompt/version"
-
-require "term/ansicolor"
-# Usage as Mixin into String or its Subclasses
-class String
-  include Term::ANSIColor
-end
-
-module Deco
-	def termShow(args)
-		color = args[:color]
-		symbol = args[:symbol]
-		content = args[:content]
-
-		if color
-				if symbol
-					"#{symbol}#{content}".send(color)
-				else
-					"#{content}".send(color)
-				end
-			else
-				if symbol
-					"#{symbol}#{content}"
-				else
-					"#{content}"
-				end
-			end
-	end
-end
+require "rprompt/deco"
+require "rprompt/termcolor"
 
 module Rprompt
 	class PromptItem
