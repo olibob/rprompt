@@ -6,8 +6,31 @@ class String
   include Term::ANSIColor
 end
 
+module Deco
+	def termShow(args)
+		color = args[:color]
+		symbol = args[:symbol]
+		content = args[:content]
+
+		if color
+				if symbol
+					"#{symbol}#{content}".send(color)
+				else
+					"#{content}".send(color)
+				end
+			else
+				if symbol
+					"#{symbol}#{content}"
+				else
+					"#{content}"
+				end
+			end
+	end
+end
+
 module Rprompt
 	class PromptItem
+		include Deco
 
 		# @return [String] symbol character to identify prompt item
 		attr_reader :symbol, :color
@@ -37,11 +60,7 @@ module Rprompt
 
 		# @return [String] terminal representation of the number of files
 		def show
-			if color
-				numberOfFiles != 0 ? "#{symbol}#{numberOfFiles}".send(color) : ""
-			else
-				numberOfFiles != 0 ? "#{symbol}#{numberOfFiles}" : ""
-			end
+			numberOfFiles != 0 ? termShow({:color => color, :symbol => symbol, :content => numberOfFiles}) : ''
 		end
 	end
 
@@ -53,11 +72,7 @@ module Rprompt
 
 		# @return [String] terminal representation of the branch name
 		def show
-			if color
-				"#{symbol}#{shortBranchName}".send(color)
-			else
-				"#{symbol}#{shortBranchName}"
-			end
+			termShow({:color => color, :symbol => symbol, :content => shortBranchName})
 		end
 	end
 
@@ -69,11 +84,7 @@ module Rprompt
 
 		# @return [String] terminal representation of the number returned by 'sha'
 		def show
-			if color
-				"#{symbol}#{sha}".send(color)
-			else
-				"#{symbol}#{sha}"
-			end
+			termShow({:color => color, :symbol => symbol, :content => sha})
 		end
 	end
 
@@ -94,11 +105,7 @@ module Rprompt
 
 		# @return [String] terminal representation of the tracking
 		def show
-			if color
-				count != 0 ? "#{symbol}#{count}".send(color) : ""
-			else
-				count != 0 ? "#{symbol}#{count}" : ""
-			end
+			count != 0 ? termShow({:color => color, :symbol => symbol, :content => count}) : ''
 		end
 	end
 
@@ -115,11 +122,7 @@ module Rprompt
 
 		# @return [String] terminal representation of the ruby version
 		def show
-			if color
-				"#{symbol}#{ruby}".send(color)
-			else
-				"#{symbol}#{ruby}"
-			end
+			termShow({:color => color, :symbol => symbol, :content => ruby})
 		end
 	end
 
@@ -136,15 +139,7 @@ module Rprompt
 
 		# @return [String] terminal representation of the gemset used
 		def show
-			if !gemset.empty?
-				if color
-					"#{symbol}#{gemset}".send(color)
-				else
-					"#{symbol}#{gemset}"
-				end
-			else
-				''
-			end
+			!gemset.empty? ? termShow({:color => color, :symbol => symbol, :content => gemset}) : ''
 		end
 	end
 

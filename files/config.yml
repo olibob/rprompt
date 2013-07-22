@@ -11,52 +11,46 @@
 ##### Git Prompt #####
 
 :git:
+  :status:
+    :color: green
+    :symbol: ✔
+
   :staged:
-    :cmd: git diff --staged --name-status
     :symbol: ●
     :color: red
 
   :untracked:
-    :cmd: git ls-files --other --exclude-standard
     :symbol: …
 
   :modified:
-    :cmd: git diff --name-status
     :symbol: ✚
     :color: blue
 
   :unmerged:
-    :cmd: git diff --name-status --diff-filter=U
     :symbol: ✖
     :color: yellow
 
   :ahead:
-    :cmd: git branch -v
     :symbol: ↑
 
   :behind:
-    :cmd: git branch -v
     :symbol: ↓
 
   :sha:
-    :cmd: git rev-parse HEAD
     :symbol: '#'
     :color: yellow
 
   :branch:
-    :cmd: git symbolic-ref HEAD
     :color: magenta
 
-  :layout: (branchbehindahead|stagedmodifieduntrackedunmergedallgood) sha
+  :layout: (branchbehindahead|stagedmodifieduntrackedunmergedstatus) sha
 
 :rvm:
   :ruby:
-    :cmd: rvm-prompt
     :color: red
     :symbol: ∆
 
   :gemset:
-    :cmd: rvm-prompt
     :color: yellow
     :symbol: ›
 

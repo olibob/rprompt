@@ -3,6 +3,7 @@
 
 require 'yaml'
 require 'rprompt'
+require 'pp'
 
 configFile = "#{File.expand_path('~')}/.rprompt/config.yml"
 begin
@@ -13,49 +14,105 @@ rescue => err
 	exit
 end
 
+if config.class == Hash
 stdPrompt = config[:stdprompt] if config.has_key?(:stdprompt)
 gitConfig = config[:git] if config.has_key?(:git)
 gitLayout = gitConfig[:layout] if gitConfig
 rvmConfig = config[:rvm] if config.has_key?(:rvm)
 rvmLayout = rvmConfig[:layout] if rvmConfig
+else
+	puts "rprompt config seems to be empty?"
+	print '\u@\h $'
+	exit 1
+end
 
-if File.exist?(".git") && gitConfig
-	staged    = Rprompt::GitNumbers.new(gitConfig[:staged])
-	modified  = Rprompt::GitNumbers.new(gitConfig[:modified])
-	untracked = Rprompt::GitNumbers.new(gitConfig[:untracked])
-	unmerged  = Rprompt::GitNumbers.new(gitConfig[:unmerged])
-	branch    = Rprompt::GitBranch.new(gitConfig[:branch])
-	ahead     = Rprompt::GitTrack.new(gitConfig[:ahead], "ahead")
-	behind    = Rprompt::GitTrack.new(gitConfig[:behind], "behind")
-	sha       = Rprompt::GitSha.new(gitConfig[:sha])
-
-	if staged.numberOfFiles == 0 && untracked.numberOfFiles == 0 && unmerged.numberOfFiles == 0 && modified.numberOfFiles == 0
-		gitLayout.gsub!(/staged|modified|untracked|unmerged/, '')
-		gitLayout.gsub!(/allgood/, "✔".send(:green)) if gitLayout.include?("allgood")
+if File.exist?(".git") && gitConfig && gitLayout
+	if gitConfig[:status]
+		status =  Rprompt::GitNumbers.new(gitConfig[:status].merge({:cmd => "git status -s"}))
 	else
-		gitLayout.gsub!(/allgood/, '') if gitLayout.include?("allgood")
-		gitLayout.gsub!(/staged/, staged.show) if gitLayout.include?("staged")
-		gitLayout.gsub!(/modified/, modified.show) if gitLayout.include?("modified")
-		gitLayout.gsub!(/untracked/, untracked.show) if gitLayout.include?("untracked")
-		gitLayout.gsub!(/unmerged/, unmerged.show) if gitLayout.include?("unmerged")
+		status = Rprompt::GitNumbers.new({:cmd => "git status -s"})
 	end
 
-	gitLayout.gsub!(/branch/, branch.show) if gitLayout.include?("branch")
-	gitLayout.gsub!(/sha/, sha.show) if gitLayout.include?("sha")
-	gitLayout.gsub!(/ahead/, ahead.show) if gitLayout.include?("ahead")
-	gitLayout.gsub!(/behind/, behind.show) if gitLayout.include?("behind")
+	if status.numberOfFiles == 0
+		gitLayout.gsub!(/staged|modified|untracked|unmerged/, '')
+		gitLayout.gsub!(/status/, "✔".send(:green)) if gitLayout.include?("status")
+	else
+		if gitConfig[:staged]
+			staged    = Rprompt::GitNumbers.new(gitConfig[:staged].merge({:cmd => "git diff --staged --name-status"}))
+			gitLayout.gsub!(/staged/, staged.show) if gitLayout.include?("staged")
+		else
+			gitLayout.gsub!(/staged/, '')
+		end
+
+		if gitConfig[:modified]
+			modified  = Rprompt::GitNumbers.new(gitConfig[:modified].merge({:cmd => "git diff --name-status"}))
+			gitLayout.gsub!(/modified/, modified.show) if gitLayout.include?("modified")
+		else
+			gitLayout.gsub!(/modified/, '')
+		end
+
+		if gitConfig[:untracked]
+			untracked = Rprompt::GitNumbers.new(gitConfig[:untracked].merge({:cmd => "git ls-files --other --exclude-standard"}))
+			gitLayout.gsub!(/untracked/, untracked.show) if gitLayout.include?("untracked")
+		else
+			gitLayout.gsub!(/untracked/, '')
+		end
+
+		if gitConfig[:unmerged]
+			unmerged  = Rprompt::GitNumbers.new(gitConfig[:unmerged].merge({:cmd => "git diff --name-status --diff-filter=U"}))
+			gitLayout.gsub!(/unmerged/, unmerged.show) if gitLayout.include?("unmerged")
+		else
+			gitLayout.gsub!(/unmerged/, '')
+		end
+
+		gitLayout.gsub!(/status/, "") if gitLayout.include?("status")
+	end
+
+	if gitConfig[:branch]
+		branch    = Rprompt::GitBranch.new(gitConfig[:branch].merge({:cmd => "git symbolic-ref HEAD"}))
+		gitLayout.gsub!(/branch/, branch.show) if gitLayout.include?("branch")
+	else
+		gitLayout.gsub!(/branch/, '')
+	end
+
+	if gitConfig[:ahead]
+		ahead     = Rprompt::GitTrack.new(gitConfig[:ahead].merge({:cmd => "git branch -v"}), "ahead")
+		gitLayout.gsub!(/ahead/, ahead.show) if gitLayout.include?("ahead")
+	else
+		gitLayout.gsub!(/ahead/, '')
+	end
+
+	if gitConfig[:behind]
+		behind    = Rprompt::GitTrack.new(gitConfig[:behind].merge({:cmd => "git branch -v"}), "behind")
+		gitLayout.gsub!(/behind/, behind.show) if gitLayout.include?("behind")
+	else
+		gitLayout.gsub!(/behind/, '')
+	end
+	if gitConfig[:sha]
+		sha       = Rprompt::GitSha.new(gitConfig[:sha].merge({:cmd => "git rev-parse HEAD"}))
+		gitLayout.gsub!(/sha/, sha.show) if gitLayout.include?("sha")
+	else
+		gitLayout.gsub!(/sha/, '')
+	end
 else
 	gitLayout = ''
 end
 
 # RVM
 
-if rvmConfig
-	ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby])
-	gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset])
-
-	rvmLayout.gsub!(/ruby/, ruby.show) if rvmLayout.include?("ruby")
-	rvmLayout.gsub!(/gemset/, gemset.show) if rvmLayout.include?("gemset")
+if rvmConfig && rvmLayout
+	if rvmConfig[:ruby]
+		ruby = Rprompt::RvmRuby.new(rvmConfig[:ruby].merge({:cmd => "rvm-prompt"}))
+		rvmLayout.gsub!(/ruby/, ruby.show) if rvmLayout.include?("ruby")
+	else
+		rvmLayout.gsub!(/ruby\s+/, '')
+	end
+	if rvmConfig[:gemset]
+		gemset = Rprompt::RvmGemset.new(rvmConfig[:gemset].merge({:cmd => "rvm-prompt"}))
+		rvmLayout.gsub!(/gemset/, gemset.show) if rvmLayout.include?("gemset")
+	else
+		rvmLayout.gsub!(/gemset/, '')
+	end
 end
 
 prompt = "#{stdPrompt[:start]}#{gitLayout} #{rvmLayout}#{stdPrompt[:end]}"
