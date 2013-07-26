@@ -6,7 +6,6 @@ module Rprompt
 	class PromptItem
 		include Deco
 
-		# @return [String] symbol character to identify prompt item
 		attr_reader :symbol, :color
 
 		# @param config [Hash] Prompt item configuration:
