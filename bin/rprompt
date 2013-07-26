@@ -26,7 +26,18 @@ else
 	exit 1
 end
 
-if File.exist?(".git") && gitConfig && gitLayout
+dir = Dir.pwd
+gitRepo = false
+
+while dir != '/' do
+    if File.exists?("#{dir}/.git")
+    	gitRepo = true
+    	break
+    end
+    dir = File.expand_path('..', dir)
+end
+
+if gitRepo && gitConfig && gitLayout
 	if gitConfig[:status]
 		status =  Rprompt::GitNumbers.new(gitConfig[:status].merge({:cmd => "git status -s"}))
 	else
